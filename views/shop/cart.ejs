@@ -1,0 +1,47 @@
+<%- include('./../partials/head.ejs') %> 
+<link rel="stylesheet" href="/css/cart.css">
+</head>
+<body>
+<%- include('./../partials/navigation.ejs')%>
+<main>
+  <div class="cart-container">
+  <section class="cart-header">
+    <p class="cart-name">Shopping cart</p>
+    <span class="price-column">Price</span>
+  </section>
+  <hr>
+  <% if(cartItems && cartItems.length) {%>
+    <% for(let prod of cartItems) {%>
+        <section class="cart-item">
+           <img src="<%= prod.imageUrl%>" alt="" class="cart-image">
+           <div class="cart-desc">
+              <div>
+                <span><%= prod.title%></span>
+                <div class="cart-qty">
+                  <span>Qty: <%= prod.quantity %> | </span>
+                  <form action="/deleteCart" method="POST">
+                      <button action="submit" class="cart-delete">Delete</button>
+                      <input type="hidden" name="productId" value="<%= prod._id%>">
+                  </form>
+                </div>
+              </div>
+              <span>₹ <%= prod.price*prod.quantity %></span>
+           </div>
+        </section>
+        <hr>
+    <%}%>
+    <div class="sub-total">
+      <div></div>
+      <span>Subtotal (<%= totalItems%>) : <span>₹ <%= totalPrice%></span></span>
+    </div>
+    <form action="/createOrder" method="post">
+      <div class="placeOrdersButton">
+        <button>Place order</button>
+      </div>
+    </form>
+  <%} else {%>
+     <p>Cart looks empty</p>
+  <%}%>
+</div>
+</main>
+<%- include('./../partials/end.ejs') %>

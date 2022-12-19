@@ -1,0 +1,34 @@
+<%- include('./../partials/head.ejs') %> 
+<link rel="stylesheet" href="/css/orders.css">
+</head>
+<body>
+<%- include('./../partials/navigation.ejs')%>
+<main>
+  <p class="order-title">Your orders</p>
+  <hr>
+  <% if(orders && orders.length) {%>
+    <% for(let order of orders) {%>
+        <div class="order-outer-container">
+          <div class="order-id">
+            <span>ORDER #<%= order._id%></span>
+            <span>Total : <%= order.orderCost%></span>
+          </div>
+          <div class="order-inner-container">
+            <% for(let item of order.items) {%>
+              <div class="order-details">
+                <div>
+                  <img src="<%= item.productId.imageUrl %>" alt="" class="order-image">
+                </div>
+                <p> <a href="/viewProduct/<%= item.productId._id%>"><%= item.productId.title %></a> </p>
+                <p>Qty: <%= item.quantity%></p>
+              </div>
+            <%}%>
+          </div>
+      </div>
+    <%}%>
+  <%} else {%>
+     <p>Orders looks empty</p>
+  <%}%>
+</div>
+</main>
+<%- include('./../partials/end.ejs') %>

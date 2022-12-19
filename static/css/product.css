@@ -1,0 +1,145 @@
+/* PRODUCTS */
+.productContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 1rem;
+  padding: 1rem;
+}
+
+.productContainer .product {
+  height: 500px;
+  width: 300px;
+  border-radius: 5px;
+}
+
+.productContainer .product .imageContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productContainer .product .imageContainer {
+  width: 100%;
+  height: 73%;
+  position: relative;
+  overflow: hidden;
+}
+
+.productContainer .product > div {
+  margin-bottom: 4px;
+}
+
+.productContainer .product .title {
+  color: #878787;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.productContainer .product .description {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.productContainer .product .price {
+  font-size: 16px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.productHover {
+  display: none;
+}
+
+.productHover > a {
+  text-decoration: none;
+  color: white;
+}
+
+.productContainer .imageContainer:hover .productHover {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  align-items: center;
+  z-index: 1;
+}
+
+.productHover > i:hover {
+  cursor: pointer;
+}
+
+/* VIEW PRODUCT */
+.viewProduct {
+  display: flex;
+}
+
+.viewProduct .imageSection {
+  height: calc(95vh - 50px);
+  width: 40vw;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.viewProduct img {
+  height: 90%;
+  max-width: 352px;
+  object-fit: cover;
+}
+
+.viewProduct .productSection {
+  margin-left: 1rem;
+}
+
+.viewProduct .productSection .title {
+  color: #878787;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.viewProduct .productSection .description {
+  margin-bottom: 10px;
+}
+
+.viewProduct .productSection .price {
+  font-size: 16px;
+  font-weight: 500;
+  color: #212121;
+}
+
+/* EDIT PRODUCT */
+
+.editProductForm {
+  width: 50%;
+  margin: auto;
+}
+
+.editProductForm .addProductTitle {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.editProductForm .fieldWrapper {
+  display: grid;
+  margin-bottom: 10px;
+}
+
+.editProductForm .fieldWrapper > label {
+  margin-bottom: 5px;
+}
+
+.editProductForm .buttonWrapper {
+  text-align: center;
+}
+
+.editProductForm .buttonWrapper.right-arrow {
+  margin-left: 5px;
+}

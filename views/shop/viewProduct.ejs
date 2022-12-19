@@ -1,0 +1,18 @@
+<%- include('./../partials/head.ejs') %> 
+<link rel="stylesheet" href="/css/product.css">
+</head>
+<body>
+<%- include('./../partials/navigation.ejs')%>
+<main>
+    <section class="viewProduct">
+        <div class="imageSection">
+            <img src="<%= prod.imageUrl %>"></img>
+        </div>
+        <div class="productSection">
+            <div class="title"><%= prod.title %></div>
+            <div class="description">Description: <%= prod.description %></div>
+            <div class="price">Price: ₹ <%= prod.price %></div>
+        </div>
+    </section>
+</main>
+<%- include('./../partials/end.ejs') %>

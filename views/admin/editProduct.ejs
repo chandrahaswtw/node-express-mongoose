@@ -1,0 +1,36 @@
+<%- include('./../partials/head.ejs') %> 
+<link rel="stylesheet" href="/css/product.css" />
+<%- include('./../partials/navigation.ejs')%>
+</head>
+<body>
+    <main>
+      <form action="<% if(edit) { %> /editProduct <%}else { %> /addProduct <% } %>" method="POST" class="editProductForm">
+        <p class="addProductTitle">Add product</p>
+        <div class="fieldWrapper">
+          <label for="">Name</label>
+          <input type="text" name="title" value="<% if(edit){%><%=prod.title%><%}%>"/>
+        </div>
+        <div class="fieldWrapper">
+          <label for="">Image</label>
+          <input type="text" name="imageUrl" value="<% if(edit) { %><%=prod.imageUrl%><%}%>">
+        </div>
+        <div class="fieldWrapper">
+          <label for="">Description</label>
+          <textarea name="description" id="" cols="30" rows="3"><% if(edit) { %><%=prod.description%><%}%></textarea>
+        </div>
+        <div class="fieldWrapper">
+          <label for="">Price</label>
+          <input type="number" name="price" value=<% if(edit) { %><%=prod.price%><%}%>>
+        </div>
+        <div class="buttonWrapper">
+          <button type="submit">
+            <% if (edit) { %> Update <% } else { %> Add <% } %>
+            <i class="fa-solid fa-arrow-right right-arrow"></i>
+          </button>
+        </div>
+        <% if(edit) {%>
+          <input type="hidden" name="id" value="<%= prod._id%>">
+        <%}%>
+      </form>
+    </main>
+<%- include('./../partials/head.ejs') %>
