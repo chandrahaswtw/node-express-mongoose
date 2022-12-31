@@ -24,7 +24,6 @@ const getOrders = async (req, res, next) => {
     }
   }
   res.render("./shop/orders", {
-    docTitle: "Orders",
     path: "/orders",
     docTitle: "My orders",
     orders,

@@ -127,15 +127,6 @@
   font-size: 1.5rem;
 }
 
-.editProductForm .fieldWrapper {
-  display: grid;
-  margin-bottom: 10px;
-}
-
-.editProductForm .fieldWrapper > label {
-  margin-bottom: 5px;
-}
-
 .editProductForm .buttonWrapper {
   text-align: center;
 }

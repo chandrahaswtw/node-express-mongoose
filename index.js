@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorRoute = require("./routes/error");
 const ordersRoute = require("./routes/orders");
+const loginRoute = require("./routes/login");
 
 // Using body-parser
 app.use(
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 app.use(shopRoutes);
 app.use(adminRoutes);
 app.use(ordersRoute);
+app.use(loginRoute);
 app.use(errorRoute);
 
 mongoose

@@ -1,45 +1,56 @@
-input, textarea {
-    border: 1.5px solid #ccc;
-    border-radius: 5px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
+input,
+textarea {
+  border: 1.5px solid #ccc;
+  border-radius: 5px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
 }
 
-input:focus, textarea {
-    outline: none;
+input:focus,
+textarea {
+  outline: none;
 }
 
 button {
-    border-radius: 5px;
-    padding: 6px 12px;
-    height: 34px;
-    color: white;
-    background-color: #34495e; 
-    border: 2px solid #34495e;
-    cursor: pointer;
+  border-radius: 5px;
+  padding: 6px 12px;
+  height: 34px;
+  color: white;
+  background-color: #34495e;
+  border: 2px solid #34495e;
+  cursor: pointer;
 }
 
 button.outline {
-    border-radius: 5px;
-    padding: 6px 12px;
-    height: 34px;
-    color : black;
-    background-color: white;
-    border: 2px solid #34495e;
-    cursor: pointer;
+  border-radius: 5px;
+  padding: 6px 12px;
+  height: 34px;
+  color: black;
+  background-color: white;
+  border: 2px solid #34495e;
+  cursor: pointer;
 }
 
 button.outline:hover {
-    background-color: #34495e; 
-    color: white;
+  background-color: #34495e;
+  color: white;
 }
 
 .button:focus {
-    outline: none;
+  outline: none;
 }
 
 .buttonInvisible {
-    border: none;
-    background-color: transparent;
+  border: none;
+  background-color: transparent;
+}
+
+.fieldWrapper {
+  display: grid;
+  margin-bottom: 10px;
+}
+
+.fieldWrapper > label {
+  margin-bottom: 5px;
 }
