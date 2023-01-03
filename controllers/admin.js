@@ -6,6 +6,7 @@ const getAddProduct = (req, res, next) => {
     path: "/addProduct",
     docTitle: "Add products",
     edit: false,
+    isAuthenticated: req.session.loggedIn,
   });
 };
 
@@ -33,6 +34,7 @@ const getEditProduct = async (req, res, next) => {
     docTitle: "Add products",
     prod: productData,
     edit: editMode,
+    isAuthenticated: req.session.loggedIn,
   });
 };
 

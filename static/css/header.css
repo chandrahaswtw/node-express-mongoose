@@ -1,36 +1,54 @@
-.header-styles{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50px;    
-    display: flex;
-    align-items: center;
-    background-color: #273c75;
-    color: white;
-    padding: 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    z-index: 300;
+.header-styles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  background-color: #273c75;
+  color: white;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  z-index: 300;
 }
 
-.header-styles  a {
-    text-decoration: none;
-    padding: 0;
-    margin: 0;
-    color: white;
-    margin-right: 10px;
+.logout-button {
+  border: none;
+  padding: none;
+  outline: none;
+  background-color: transparent;
+  font: inherit;
 }
 
-.header-styles a:active, .header-styles a.active  {
-    color: #f1c40f;
+.logout-button:hover {
+  outline: none;
 }
 
-.header-logo{
-    color: #f1c40f;
+.header-styles form {
+  display: inline-block;
 }
 
-.header-title{
-    color: white;
-    font-style: italic;
+.header-styles a,
+.logout-button {
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  color: white;
+  margin-right: 10px;
+}
+
+.header-styles a:active,
+.header-styles a.active {
+  color: #f1c40f;
+}
+
+.header-logo {
+  color: #f1c40f;
+}
+
+.header-title {
+  color: white;
+  font-style: italic;
 }

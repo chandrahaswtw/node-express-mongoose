@@ -4,6 +4,8 @@ const app = express();
 const path = require("path");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 const User = require("./models/user");
 
 // Routes
@@ -11,7 +13,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const errorRoute = require("./routes/error");
 const ordersRoute = require("./routes/orders");
-const loginRoute = require("./routes/login");
+const authRoute = require("./routes/auth");
 
 // Using body-parser
 app.use(
@@ -28,9 +30,26 @@ app.set("view engine", "ejs");
 const allViews = path.join(__dirname, "views");
 app.set("views", allViews);
 
-// Auth route
+// Session
+const store = new MongoDBStore({
+  uri: process.env.mongoURI,
+  collection: "session",
+});
+app.use(
+  session({
+    secret: "My secret",
+    resave: false,
+    saveUninitialized: false,
+    store,
+  })
+);
+
+// GET USER DATA FROM SESSION IF EXISTS
 app.use((req, res, next) => {
-  User.findById("63960194ebfe76cc877b1b41")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -44,11 +63,11 @@ app.use((req, res, next) => {
 app.use(shopRoutes);
 app.use(adminRoutes);
 app.use(ordersRoute);
-app.use(loginRoute);
+app.use(authRoute);
 app.use(errorRoute);
 
 mongoose
-  .connect(process.env.mongoURI)
+  .connect(`${process.env.mongoURI}?retryWrites=true&w=majority`)
   .then(async () => {
     console.log("Successfully connected to database");
     app.listen(3000, () => {

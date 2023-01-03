@@ -7,15 +7,15 @@ const {
   postEditProduct,
   postDeleteProduct,
 } = require("../controllers/admin");
+const authMiddleware = require("./../middleware/authMiddleware");
 
-Router.get("/addProduct", getAddProduct);
+Router.get("/addProduct", authMiddleware, getAddProduct);
 
-Router.post("/addProduct", postAddProduct);
+Router.post("/addProduct", authMiddleware, postAddProduct);
 
-Router.get("/editProduct/:id", getEditProduct);
+Router.get("/editProduct/:id", authMiddleware, getEditProduct);
 
-Router.post("/editProduct", postEditProduct);
+Router.post("/editProduct", authMiddleware, postEditProduct);
 
-Router.post("/deleteProduct", postDeleteProduct);
-
-module.exports = Router;
+Router.post("/deleteProduct", authMiddleware, postDeleteProduct);
+authMiddleware, (module.exports = Router);

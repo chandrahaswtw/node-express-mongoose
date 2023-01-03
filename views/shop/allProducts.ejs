@@ -24,7 +24,9 @@
       <div class="title"><%= i.title %></div>
       <div class="description"><%= i.description %></div>
       <div class="price">₹ <%= i.price %></div>
+      <% if(isAuthenticated) {%>
       <%- include('./../partials/addCart.ejs', {prod : i})%>
+      <% } %>
     </div>
     <% } %>
   </section>

@@ -5,13 +5,20 @@
   </div>
   <div class="header-options">
     <a href="/" class="<%= path === '/' ? 'active' : '' %>">Home</a>
-    <a href="/addProduct" class="<%= path === '/addProduct' ? 'active' : '' %>"
-      >Add product</a
-    >
+    <% if(isAuthenticated) {%>
     <a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a>
     <a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>"
       >Orders</a
     >
+    <a href="/addProduct" class="<%= path === '/addProduct' ? 'active' : '' %>"
+      >Add product</a
+    >
+    <% } %> <% if(!isAuthenticated) {%>
     <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+    <% } else {%>
+    <form action="/logout" method="POST">
+      <button class="logout-button">Logout</button>
+    </form>
+    <% }%>
   </div>
 </header>

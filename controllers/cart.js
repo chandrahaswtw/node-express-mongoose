@@ -19,6 +19,7 @@ const getCart = async (req, res) => {
     totalPrice: 0,
     path: "/cart",
     docTitle: "cart",
+    isAuthenticated: req.session.loggedIn,
   });
 };
 

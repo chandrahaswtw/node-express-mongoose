@@ -7,6 +7,7 @@ const getProducts = async (req, res, next) => {
     prod: products,
     path: "/",
     docTitle: "Home",
+    isAuthenticated: req.session.loggedIn,
   });
 };
 
@@ -17,6 +18,7 @@ const viewProduct = async (req, res, next) => {
     prod: productData,
     path: "/",
     docTitle: productData.title,
+    isAuthenticated: req.session.loggedIn,
   });
 };
 

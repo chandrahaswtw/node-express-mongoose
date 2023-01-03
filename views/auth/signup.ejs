@@ -4,17 +4,21 @@
 <body>
 <%- include('./../partials/navigation.ejs')%>
 <main class="form-container">
-    <form action="/postLogin" method="POST" class="form-body">
-        <p class="form-title ">LOGIN</p>
+    <form action="/postSignup" method="POST" class="form-body">
+        <p class="form-title ">SIGN UP</p>
         <div class="fieldWrapper">
-            <label for="">Username</label>
-            <input type="text" name="username" value=""/>
+            <label for="">Email</label>
+            <input type="text" name="email" value=""/>
         </div>
         <div class="fieldWrapper">
             <label for="">Password</label>
             <input type="password" name="password" value=""/>
         </div>
-        <button type="submit">Login</button>
+        <div class="fieldWrapper">
+            <label for="">Confirm Password</label>
+            <input type="password" name="confirmPassword" value=""/>
+        </div>
+        <button type="submit">Signup</button>
     </form>
 </main>
 <%- include('./../partials/end.ejs') %>

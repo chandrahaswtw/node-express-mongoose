@@ -27,6 +27,7 @@ const getOrders = async (req, res, next) => {
     path: "/orders",
     docTitle: "My orders",
     orders,
+    isAuthenticated: req.session.loggedIn,
   });
 };
 

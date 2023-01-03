@@ -1,0 +1,21 @@
+<%- include('./../partials/head.ejs') %> 
+<link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+<%- include('./../partials/navigation.ejs')%>
+<main class="form-container">
+    <form action="/postLogin" method="POST" class="form-body">
+        <p class="form-title ">LOGIN</p>
+        <div class="fieldWrapper">
+            <label for="">Email</label>
+            <input type="text" name="email" value=""/>
+        </div>
+        <div class="fieldWrapper">
+            <label for="">Password</label>
+            <input type="password" name="password" value=""/>
+        </div>
+        <button type="submit">Login</button>
+        <p class="signup-text">Not a user? Sign up <a href="/signup">here</a> </p>
+    </form>
+</main>
+<%- include('./../partials/end.ejs') %>
