@@ -2,8 +2,14 @@
 <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-<%- include('./../partials/navigation.ejs')%>
+<%- include('./../partials/navigation.ejs')%>  
 <main class="form-container">
+    <div>
+        <% if(errorMessage) {%>
+            <div class="flash-container">
+                <span class="flash-message danger"><%= errorMessage%></span>
+            </div>
+        <% } %>  
     <form action="/postLogin" method="POST" class="form-body">
         <p class="form-title ">LOGIN</p>
         <div class="fieldWrapper">
@@ -17,5 +23,6 @@
         <button type="submit">Login</button>
         <p class="signup-text">Not a user? Sign up <a href="/signup">here</a> </p>
     </form>
+</div>
 </main>
 <%- include('./../partials/end.ejs') %>

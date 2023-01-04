@@ -18,3 +18,21 @@ hr {
   border: none;
   background-color: #ccc;
 }
+
+.flash-container {
+  text-align: center;
+}
+
+.flash-message {
+  display: inline-block;
+  margin: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  border: 2px solid #ccc;
+  color: white;
+}
+
+.danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}

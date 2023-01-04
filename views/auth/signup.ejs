@@ -4,6 +4,12 @@
 <body>
 <%- include('./../partials/navigation.ejs')%>
 <main class="form-container">
+    <div>
+        <% if(errorMessage) {%>
+            <div class="flash-container">
+                <span class="flash-message danger"><%= errorMessage%></span>
+            </div>
+        <% } %>  
     <form action="/postSignup" method="POST" class="form-body">
         <p class="form-title ">SIGN UP</p>
         <div class="fieldWrapper">
@@ -20,5 +26,6 @@
         </div>
         <button type="submit">Signup</button>
     </form>
+</div>
 </main>
 <%- include('./../partials/end.ejs') %>

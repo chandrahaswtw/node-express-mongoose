@@ -2,10 +2,13 @@ const User = require("./../models/user");
 const bcrypt = require("bcrypt");
 
 const getLogin = async (req, res) => {
+  const messages = req.flash("error");
+  const message = messages.length ? messages[0] : null;
   res.render("./auth/login.ejs", {
     path: "/login",
     docTitle: "Login",
     isAuthenticated: req.session.loggedIn,
+    errorMessage: message,
   });
 };
 
@@ -13,18 +16,21 @@ const postLogin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
-    console.log("No user with the email ", email);
+    req.flash("error", "Incorrect email id or password");
     return res.redirect("/login");
   }
   const { password: hash } = user;
-  const isPasswordValid = bcrypt.compare(password, hash);
-  if (isPasswordValid) {
-    req.session.loggedIn = true;
-    req.session.user = user;
-    req.session.save(() => {
-      res.redirect("/");
-    });
+  const isPasswordValid = await bcrypt.compare(password, hash);
+  console.log(isPasswordValid);
+  if (!isPasswordValid) {
+    req.flash("error", "Incorrect email id or password");
+    return res.redirect("/login");
   }
+  req.session.loggedIn = true;
+  req.session.user = user;
+  req.session.save(() => {
+    res.redirect("/");
+  });
 };
 
 const postLogout = async (req, res) => {
@@ -34,10 +40,13 @@ const postLogout = async (req, res) => {
 };
 
 const getSignup = async (req, res) => {
+  const messages = req.flash("error");
+  const message = messages.length ? messages[0] : null;
   res.render("./auth/signup.ejs", {
     path: "/signup",
     docTitle: "Signup",
     isAuthenticated: req.session.loggedIn,
+    errorMessage: message,
   });
 };
 
@@ -46,7 +55,7 @@ const postSignup = async (req, res) => {
     const { email, password } = req.body;
     const isExistingUser = await User.findOne({ email });
     if (isExistingUser) {
-      console.log("User already exists");
+      req.flash("error", "User already exists, sign in instead");
       return res.redirect("/signup");
     }
     console.log(password);
