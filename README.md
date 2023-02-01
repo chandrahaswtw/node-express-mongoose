@@ -1,6 +1,29 @@
-## Online store
+# Online store
 
-Developed using node.js, mongoDb and ejs as template engine. The collection information from mongodb is as below:
+An online store app where admins can create products and customers can purchase the products and place orders.The technology stack is as below:
+
+- node.js
+- ejs as template engine.
+- mongoose ORM to interact with mongoDB.
+- SendGrid to trigger emails.
+- express-session deal with session.
+
+Typically you need to add an `.env` to have this application work. An example file `.env.example` file is attached for your reference.
+
+## How to use
+
+Install all the dependencies:
+```
+  npm install
+```
+Launch the app:
+```
+  node index.js
+```
+
+## Database model
+
+The mongoDB collections and their examples are as below:
 
 ### users
 
