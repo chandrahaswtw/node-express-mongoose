@@ -2,7 +2,6 @@ const Product = require("../models/products");
 
 const getProducts = async (req, res, next) => {
   const products = await Product.find();
-  console.log(products);
   res.render("./shop/allProducts", {
     prod: products,
     path: "/",

@@ -32,6 +32,12 @@ button.outline {
   cursor: pointer;
 }
 
+button.full-width{
+  width: 100%;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
 button.outline:hover {
   background-color: #34495e;
   color: white;
@@ -53,4 +59,8 @@ button.outline:hover {
 
 .fieldWrapper > label {
   margin-bottom: 5px;
+}
+
+.underline{
+  margin: 1rem 0;
 }

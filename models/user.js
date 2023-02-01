@@ -11,6 +11,14 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  resetToken: {
+    token: {
+      type: String,
+    },
+    expirationDate: {
+      type: Schema.Types.Date,
+    },
+  },
   cart: {
     items: [
       {
@@ -34,7 +42,6 @@ userSchema.methods.addToCart = async function (productId) {
     (item) => item.productId.toString() === productId
   );
   const updatedCartItems = [...this.cart.items];
-  console.log(updatedCartItems, cartIndex);
   if (cartIndex > -1) {
     const requiredItem = { ...this.cart.items[cartIndex].toObject() };
     requiredItem.quantity += 1;

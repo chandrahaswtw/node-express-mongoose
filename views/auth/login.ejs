@@ -3,26 +3,29 @@
 </head>
 <body>
 <%- include('./../partials/navigation.ejs')%>  
-<main class="form-container">
-    <div>
-        <% if(errorMessage) {%>
-            <div class="flash-container">
-                <span class="flash-message danger"><%= errorMessage%></span>
+<main>
+    <div class="center-flex">
+    <%- include('./../partials/orgName.ejs')%>  
+        <div>
+            <%- include('./../partials/alert.ejs')%> 
+            <form action="/postLogin" method="POST" class="form-card">
+                <p class="form-card-title">Sign in</p>
+                <div class="fieldWrapper">
+                    <label for="">Email</label>
+                    <input type="text" name="email" value=""/>
+                </div>
+                <div class="fieldWrapper">
+                    <label for="">Password</label>
+                    <input type="password" name="password" value=""/>
+                </div>
+                <button type="submit" class="full-width">Login</button>
+            </form>
+            <hr class="underline">
+            <div class="login-links-section">
+                <a href="/signup">New user? Sign up here</a>
+                <a href="/forgotPassword">Forgot password</a>
             </div>
-        <% } %>  
-    <form action="/postLogin" method="POST" class="form-body">
-        <p class="form-title ">LOGIN</p>
-        <div class="fieldWrapper">
-            <label for="">Email</label>
-            <input type="text" name="email" value=""/>
         </div>
-        <div class="fieldWrapper">
-            <label for="">Password</label>
-            <input type="password" name="password" value=""/>
-        </div>
-        <button type="submit">Login</button>
-        <p class="signup-text">Not a user? Sign up <a href="/signup">here</a> </p>
-    </form>
-</div>
+    </div>
 </main>
 <%- include('./../partials/end.ejs') %>

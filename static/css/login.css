@@ -1,26 +1,24 @@
-.form-container {
-  height: calc(100vh - 50px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.login-links-section{
+    display: flex;
+    justify-content: space-between;
 }
 
-.form-body {
-  padding: 1.5rem;
-  width: 50vw;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.login-links-section  a {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    padding: 6px 12px;
+    height: 34px;
+    color: black;
+    background-color: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
 }
 
-.form-title {
-  margin: 0 0 1rem 0;
-  text-transform: capitalize;
-  display: inline-block;
-  font-size: 1.1em;
-  font-weight: 600;
-}
-
-.signup-text {
-  padding: 0;
-  margin-bottom: 0;
+.login-links-section  a:first-child{
+    margin-right: 1rem;
 }

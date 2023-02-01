@@ -1,0 +1,5 @@
+Token creation:
+- A new form --> resetPassword just to enter email.
+    - Checks if the email exists. If not flash a message that no account exists with this email.
+    - If account exists, trigger an email with /reset:token message.
+- 
