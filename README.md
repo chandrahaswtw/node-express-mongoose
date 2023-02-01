@@ -18,6 +18,10 @@ Contain user information. Cart is associated with the user.
           quantity: 1
         }
       ]
+    },
+    resetToken : {
+      token: "Token",
+      expirationDate: 2023-02-01T13:26:02.634+00:00
     }
   }
 ```
