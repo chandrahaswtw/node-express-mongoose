@@ -1,4 +1,5 @@
 const Product = require("./../models/products");
+const { validationResult } = require("express-validator");
 
 const getAddProduct = (req, res, next) => {
   res.render("./admin/editProduct", {
@@ -6,12 +7,38 @@ const getAddProduct = (req, res, next) => {
     path: "/addProduct",
     docTitle: "Add products",
     edit: false,
+    hasError: false,
     isAuthenticated: req.session.loggedIn,
+    prod: {
+      title: "",
+      imageUrl: "",
+      description: "",
+      price: "",
+    },
+    validationErrors: [],
   });
 };
 
 const postAddProduct = async (req, res, next) => {
   const { title, imageUrl, description, price } = req.body;
+  const { errors } = validationResult(req);
+  if (errors.length) {
+    return res.status(422).render("./admin/editProduct", {
+      docTitle: "Add products",
+      path: "/addProduct",
+      isAuthenticated: req.session.loggedIn,
+      edit: false,
+      alertMessage: null,
+      hasError: true,
+      prod: {
+        title,
+        imageUrl,
+        description,
+        price,
+      },
+      validationErrors: errors,
+    });
+  }
   const userId = req.user._id;
   const product = new Product({ title, imageUrl, description, price, userId });
   await product.save();
@@ -34,21 +61,45 @@ const getEditProduct = async (req, res, next) => {
     docTitle: "Add products",
     prod: productData,
     edit: editMode,
+    hasError: false,
     isAuthenticated: req.session.loggedIn,
+    validationErrors: [],
   });
 };
 
 const postEditProduct = async (req, res, next) => {
   const { id, title, imageUrl, description, price } = req.body;
+  const { errors } = validationResult(req);
+  if (errors.length) {
+    return res.status(422).render("./admin/editProduct", {
+      docTitle: "Add products",
+      path: "/addProduct",
+      isAuthenticated: req.session.loggedIn,
+      edit: true,
+      alertMessage: null,
+      hasError: true,
+      prod: {
+        title,
+        imageUrl,
+        description,
+        price,
+        _id: id,
+      },
+      validationErrors: errors,
+    });
+  }
   const userId = req.user._id;
-  await Product.updateOne({
-    _id: id,
-    title,
-    imageUrl,
-    description,
-    price,
-    userId,
-  });
+  console.log("BOOM", id, userId);
+  await Product.updateOne(
+    { _id: id },
+    {
+      title,
+      imageUrl,
+      description,
+      price,
+      userId,
+    }
+  );
   res.redirect("/");
 };
 

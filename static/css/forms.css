@@ -12,6 +12,10 @@ textarea {
   outline: none;
 }
 
+.validation-error {
+  border-color: #721c24;
+}
+
 button {
   border-radius: 5px;
   padding: 6px 12px;
@@ -32,7 +36,7 @@ button.outline {
   cursor: pointer;
 }
 
-button.full-width{
+button.full-width {
   width: 100%;
   display: inline-block;
   margin-top: 0.5rem;
@@ -61,6 +65,6 @@ button.outline:hover {
   margin-bottom: 5px;
 }
 
-.underline{
+.underline {
   margin: 1rem 0;
 }

@@ -7,20 +7,21 @@
     <div class="center-flex">
         <%- include('./../partials/orgName.ejs')%> 
         <div>
-            <%- include('./../partials/alert.ejs')%> 
-            <form action="/postSignup" method="POST" class="form-card">
+            <%- include('./../partials/flashAlert.ejs')%> 
+            <%- include('./../partials/validationAlert.ejs')%> 
+            <form action="/signup" method="POST" class="form-card">
                 <p class="form-card-title">Sign up</p>
                 <div class="fieldWrapper">
                     <label for="">Email</label>
-                    <input type="text" name="email" value=""/>
+                    <input type="text" name="email" value="<%= oldInput.email%>" class="<%= validationErrors.find(e => e.param === 'email') ? 'validation-error' : '' %>"/>
                 </div>
                 <div class="fieldWrapper">
                     <label for="">Password</label>
-                    <input type="password" name="password" value=""/>
+                    <input type="password" name="password" value="<%= oldInput.password%>" class="<%= validationErrors.find(e => e.param === 'password') ? 'validation-error' : '' %>"/>
                 </div>
                 <div class="fieldWrapper">
                     <label for="">Confirm Password</label>
-                    <input type="password" name="confirmPassword" value=""/>
+                    <input type="password" name="confirmPassword" value="<%= oldInput.confirmPassword%>" class="<%= validationErrors.find(e => e.param === 'confirmPassword') ? 'validation-error' : '' %>"/>
                 </div>
                 <button type="submit" class="full-width">Signup</button>
             </form>

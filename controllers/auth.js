@@ -2,6 +2,71 @@ const User = require("./../models/user");
 const bcrypt = require("bcrypt");
 const { sendMail } = require("./../utils/sendEmail");
 const crypto = require("crypto");
+const { validationResult } = require("express-validator");
+
+const getSignup = async (req, res) => {
+  const messages = req.flash("alertMessage");
+  const message = messages.length ? messages[0] : null;
+  res.render("./auth/signup.ejs", {
+    path: "/signup",
+    docTitle: "Signup",
+    isAuthenticated: req.session.loggedIn,
+    alertMessage: message,
+    oldInput: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationErrors: [],
+  });
+};
+
+const postSignup = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+    // Validation error check
+    const { errors } = validationResult(req);
+    console.log(errors);
+    if (errors.length) {
+      return res.status(422).render("./auth/signup.ejs", {
+        path: "/signup",
+        docTitle: "Signup",
+        isAuthenticated: req.session.loggedIn,
+        alertMessage: null,
+        oldInput: {
+          email,
+          password,
+          confirmPassword,
+        },
+        validationErrors: errors,
+      });
+    }
+
+    const isExistingUser = await User.findOne({ email });
+    if (isExistingUser) {
+      req.flash("alertMessage", {
+        message: "User already exists, sign in instead",
+        type: "danger",
+      });
+      return res.redirect("/signup");
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new User({
+      email,
+      password: hashedPassword,
+      cart: { items: [] },
+    });
+    await user.save();
+    res.redirect("/login");
+    await sendMail(
+      email,
+      "Congratulations, Signed up successfully",
+      "<p>You got signed up successfully into online-store.</p><p>We can't wait to see you purchase amazing products on this website</p>"
+    );
+  } catch (e) {
+    console.log("Error during signup ", e);
+  }
+};
 
 const getLogin = async (req, res) => {
   const messages = req.flash("alertMessage");
@@ -11,13 +76,35 @@ const getLogin = async (req, res) => {
     docTitle: "Login",
     isAuthenticated: req.session.loggedIn,
     alertMessage: message,
+    oldInput: {
+      email: "",
+      password: "",
+    },
+    validationErrors: [],
   });
 };
 
 const postLogin = async (req, res) => {
+  const { errors } = validationResult(req);
+  // Validation error check
+  if (errors.length) {
+    const { email, password } = req.body;
+    return res.status(422).render("./auth/login.ejs", {
+      path: "/login",
+      docTitle: "Login",
+      isAuthenticated: req.session.loggedIn,
+      alertMessage: null,
+      oldInput: {
+        email,
+        password,
+      },
+      validationErrors: errors,
+    });
+  }
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
+    // We can avoid using flash messages and just pass res.status(422) here to pass the old data.
     req.flash("alertMessage", {
       message: "Incorrect email id or password",
       type: "danger",
@@ -47,46 +134,6 @@ const postLogout = async (req, res) => {
   });
 };
 
-const getSignup = async (req, res) => {
-  const messages = req.flash("alertMessage");
-  const message = messages.length ? messages[0] : null;
-  res.render("./auth/signup.ejs", {
-    path: "/signup",
-    docTitle: "Signup",
-    isAuthenticated: req.session.loggedIn,
-    alertMessage: message,
-  });
-};
-
-const postSignup = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const isExistingUser = await User.findOne({ email });
-    if (isExistingUser) {
-      req.flash("alertMessage", {
-        message: "User already exists, sign in instead",
-        type: "danger",
-      });
-      return res.redirect("/signup");
-    }
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const user = new User({
-      email,
-      password: hashedPassword,
-      cart: { items: [] },
-    });
-    await user.save();
-    res.redirect("/login");
-    await sendMail(
-      email,
-      "Congratulations, Signed up successfully",
-      "<p>You got signed up successfully into online-store.</p><p>We can't wait to see you purchase amazing products on this website</p>"
-    );
-  } catch (e) {
-    console.log("Error during signup ", e);
-  }
-};
-
 const getForgotPassword = async (req, res) => {
   const messages = req.flash("alertMessage");
   const message = messages.length ? messages[0] : null;
@@ -95,15 +142,29 @@ const getForgotPassword = async (req, res) => {
     docTitle: "Reset password",
     alertMessage: message,
     isAuthenticated: false,
+    oldInput: {
+      email: "",
+    },
+    validationErrors: [],
   });
 };
 
 const postForgotPassword = async (req, res) => {
   const { email } = req.body;
-  const existingUser = await User.findOne({ email });
-  if (!existingUser) {
-    req.flash("error", "User doesn't exist with this email id.");
-    return res.redirect("/forgotPassword");
+  const { user: existingUser } = req;
+  const { errors } = validationResult(req);
+  // Validation error check
+  if (errors.length) {
+    return res.status(422).render("./auth/forgetPassword.ejs", {
+      path: "/reset",
+      docTitle: "Reset password",
+      isAuthenticated: false,
+      alertMessage: null,
+      oldInput: {
+        email,
+      },
+      validationErrors: errors,
+    });
   }
   crypto.randomBytes(32, async (err, buff) => {
     if (err) throw err;
@@ -156,12 +217,32 @@ const getResetPassword = async (req, res) => {
     alertMessage: message,
     token,
     isAuthenticated: false,
+    oldInput: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationErrors: [],
   });
 };
 
 const postResetPassword = async (req, res) => {
   const { token, newPassword, confirmPassword } = req.body;
-
+  // Validation error check
+  const { errors } = validationResult(req);
+  if (errors.length) {
+    return res.status(422).render("./auth/resetPassword.ejs", {
+      path: "/reset",
+      docTitle: "Reset password",
+      isAuthenticated: false,
+      alertMessage: null,
+      token,
+      oldInput: {
+        newPassword,
+        confirmPassword,
+      },
+      validationErrors: errors,
+    });
+  }
   // Check the matched user and check if token is expired.
   // This happens when user opened the page but did't reset it for an hour.
   const matchedUser = await User.findOne({
@@ -192,11 +273,11 @@ const postResetPassword = async (req, res) => {
 };
 
 module.exports = {
+  getSignup,
+  postSignup,
   getLogin,
   postLogin,
   postLogout,
-  getSignup,
-  postSignup,
   getForgotPassword,
   postForgotPassword,
   getResetPassword,

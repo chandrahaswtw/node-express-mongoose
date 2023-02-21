@@ -1,0 +1,10 @@
+<% if(validationErrors.length) {%>
+<div class="flash-message danger">
+  <p>Please fix the below errors:</p>
+  <ul>
+    <% for(error of validationErrors) {%>
+    <li><%= error.msg %></li>
+    <% } %>
+  </ul>
+</div>
+<% } %>
