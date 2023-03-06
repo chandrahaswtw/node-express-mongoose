@@ -10,7 +10,9 @@
     <% for(let order of orders) {%>
         <div class="order-outer-container">
           <div class="order-id">
-            <span>ORDER #<%= order._id%></span>
+            <div>ORDER #<%= order._id%>
+              <a href="/invoice/<%= order._id%>">Invoice</a>
+            </div>
             <span>Total : <%= order.orderCost%></span>
           </div>
           <div class="order-inner-container">
