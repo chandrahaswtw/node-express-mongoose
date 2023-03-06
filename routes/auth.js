@@ -35,7 +35,6 @@ Router.post(
       .trim()
       .custom((value, { req }) => {
         const { password, confirmPassword } = req.body;
-        console.log("Hi there", password, confirmPassword);
         if (password !== confirmPassword) {
           throw new Error("Passwords don't match");
         }

@@ -9,9 +9,10 @@ const getAddProduct = (req, res, next) => {
     edit: false,
     hasError: false,
     isAuthenticated: req.session.loggedIn,
+    alertMessage: null,
     prod: {
       title: "",
-      imageUrl: "",
+      image: "",
       description: "",
       price: "",
     },
@@ -20,8 +21,10 @@ const getAddProduct = (req, res, next) => {
 };
 
 const postAddProduct = async (req, res, next) => {
-  const { title, imageUrl, description, price } = req.body;
+  const { title, description, price } = req.body;
+  const image = req?.file?.path;
   const { errors } = validationResult(req);
+  // First checking the form errors
   if (errors.length) {
     return res.status(422).render("./admin/editProduct", {
       docTitle: "Add products",
@@ -32,16 +35,43 @@ const postAddProduct = async (req, res, next) => {
       hasError: true,
       prod: {
         title,
-        imageUrl,
         description,
         price,
       },
       validationErrors: errors,
     });
   }
+  // Check if image is uploaded
+  if (!image) {
+    return res.status(422).render("./admin/editProduct", {
+      docTitle: "Add products",
+      path: "/addProduct",
+      isAuthenticated: req.session.loggedIn,
+      edit: false,
+      alertMessage: {
+        type: "danger",
+        message:
+          "Enter a valid image. Only formats jpeg/png/jpg format allowed",
+      },
+      hasError: true,
+      prod: {
+        title,
+        description,
+        price,
+      },
+      validationErrors: [],
+    });
+  }
+
   const userId = req.user._id;
-  const product = new Product({ title, imageUrl, description, price, userId });
-  await product.save();
+  try {
+    const product = new Product({ title, image, description, price, userId });
+    await product.save();
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
   return res.redirect("/");
 };
 
@@ -62,13 +92,15 @@ const getEditProduct = async (req, res, next) => {
     prod: productData,
     edit: editMode,
     hasError: false,
+    alertMessage: null,
     isAuthenticated: req.session.loggedIn,
     validationErrors: [],
   });
 };
 
 const postEditProduct = async (req, res, next) => {
-  const { id, title, imageUrl, description, price } = req.body;
+  const { id, title, description, price } = req.body;
+  const image = req?.file?.path;
   const { errors } = validationResult(req);
   if (errors.length) {
     return res.status(422).render("./admin/editProduct", {
@@ -89,23 +121,34 @@ const postEditProduct = async (req, res, next) => {
     });
   }
   const userId = req.user._id;
-  console.log("BOOM", id, userId);
-  await Product.updateOne(
-    { _id: id },
-    {
-      title,
-      imageUrl,
-      description,
-      price,
-      userId,
-    }
-  );
-  res.redirect("/");
+  const modifiedProduct = {
+    title,
+    description,
+    price,
+    userId,
+  };
+  if (image) {
+    modifiedProduct.image = image;
+  }
+  try {
+    await Product.updateOne({ _id: id }, modifiedProduct);
+    res.redirect("/");
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 const postDeleteProduct = async (req, res, next) => {
   const { id } = req.body;
-  await Product.findByIdAndDelete(id);
+  try {
+    await Product.findByIdAndDelete(id);
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
   res.redirect("/");
 };
 

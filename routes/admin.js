@@ -13,13 +13,6 @@ const { body } = require("express-validator");
 // Common validation middleware
 const addEditProductMiddleware = [
   body("title").trim().notEmpty().withMessage("Product title can't be empty."),
-  body("imageUrl")
-    .trim()
-    .notEmpty()
-    .withMessage("Product URL title can't be empty.")
-    .bail()
-    .isURL()
-    .withMessage("Enter valid URL"),
   body("description")
     .trim()
     .notEmpty()

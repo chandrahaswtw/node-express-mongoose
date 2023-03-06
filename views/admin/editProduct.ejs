@@ -4,16 +4,17 @@
 </head>
 <body>
     <main>
-      <form action="<% if(edit) { %> /editProduct <%}else { %> /addProduct <% } %>" method="POST" class="editProductForm">
+      <form action="<% if(edit) { %> /editProduct <%}else { %> /addProduct <% } %>" method="POST" class="editProductForm" enctype="multipart/form-data">
         <p class="addProductTitle">Add product</p>
         <%- include('./../partials/validationAlert.ejs')%> 
+        <%- include('./../partials/flashAlert.ejs')%> 
         <div class="fieldWrapper">
           <label for="">Name</label>
           <input type="text" name="title" value="<% if(edit || hasError){%><%=prod.title%><%}%>" class="<%= validationErrors.find(e => e.param === 'title') ? 'validation-error' : '' %>"/>
         </div>
         <div class="fieldWrapper">
           <label for="">Image</label>
-          <input type="text" name="imageUrl" value="<% if(edit || hasError) { %><%=prod.imageUrl%><%}%>" class="<%= validationErrors.find(e => e.param === 'imageUrl') ? 'validation-error' : '' %>"/>
+          <input type="file" name="image"/>
         </div>
         <div class="fieldWrapper">
           <label for="">Description</label>

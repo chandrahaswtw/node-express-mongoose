@@ -17,7 +17,7 @@
             <% for(let item of order.items) {%>
               <div class="order-details">
                 <div>
-                  <img src="<%= item.productId.imageUrl %>" alt="" class="order-image">
+                  <img src="<%= item.productId.image %>" alt="" class="order-image">
                 </div>
                 <p> <a href="/viewProduct/<%= item.productId._id%>"><%= item.productId.title %></a> </p>
                 <p>Qty: <%= item.quantity%></p>

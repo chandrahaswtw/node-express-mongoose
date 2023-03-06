@@ -13,10 +13,13 @@ Typically you need to add an `.env` to have this application work. An example fi
 ## How to use
 
 Install all the dependencies:
+
 ```
   npm install
 ```
+
 Launch the app:
+
 ```
   node index.js
 ```
@@ -57,7 +60,7 @@ Contains information of all the products.
   {
     _id: ObjectId("63886f682e0890845eff287a"),
     title: 'Atlassian',
-    imageUrl: 'https://i.guim.co.uk/img/media/d5bcb96ef160fe3706cc913861f2cf7bafd2c5b1/83_310_3368_2022/master/3368.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=afd2783ea78cd66bf61361f385c21cca',
+    image: 'https://i.guim.co.uk/img/media/d5bcb96ef160fe3706cc913861f2cf7bafd2c5b1/83_310_3368_2022/master/3368.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=afd2783ea78cd66bf61361f385c21cca',
     description: '',
     price: '300',
     userId: ObjectId("638343ea1a765c6f7dca7db6")

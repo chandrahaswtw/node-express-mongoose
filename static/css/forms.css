@@ -12,6 +12,12 @@ textarea {
   outline: none;
 }
 
+input[type="file"] {
+  height: 35px;
+  padding: 0;
+  border-color: transparent;
+}
+
 .validation-error {
   border-color: #721c24;
 }

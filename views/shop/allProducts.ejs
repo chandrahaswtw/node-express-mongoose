@@ -9,14 +9,16 @@
     <% for(i of prod)  { %>
     <div class="product">
       <div class="imageContainer">
-        <img src="<%= i.imageUrl %>" alt="no image">
-          <form action="/deleteProduct" method="POST">
+        <img src="\<%= i.image %>" alt="no image">
+        <form action="/deleteProduct" method="POST">
           <div class="productHover">
+            <% if(isAuthenticated) {%>
             <a href="/editProduct/<%= i._id%>?edit=true">
               <i class="fa-solid fa-pen-to-square fa-lg"></i>
             </a>
            <button class="buttonInvisible" type="submit"><i class="fa-solid fa-trash fa-lg"></i></button>
-            <a href="/viewProduct/<%= i._id%>"> <i class="fa-solid fa-eye fa-lg"></i></a>
+           <% } %> 
+           <a href="/viewProduct/<%= i._id%>"> <i class="fa-solid fa-eye fa-lg"></i></a>
           </div>
           <input type="hidden" name="id" value="<%= i._id%>">
         </form>

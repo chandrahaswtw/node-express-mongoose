@@ -26,7 +26,6 @@ const postSignup = async (req, res) => {
     const { email, password, confirmPassword } = req.body;
     // Validation error check
     const { errors } = validationResult(req);
-    console.log(errors);
     if (errors.length) {
       return res.status(422).render("./auth/signup.ejs", {
         path: "/signup",
@@ -65,6 +64,9 @@ const postSignup = async (req, res) => {
     );
   } catch (e) {
     console.log("Error during signup ", e);
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
   }
 };
 
@@ -85,47 +87,53 @@ const getLogin = async (req, res) => {
 };
 
 const postLogin = async (req, res) => {
-  const { errors } = validationResult(req);
-  // Validation error check
-  if (errors.length) {
+  try {
+    const { errors } = validationResult(req);
+    // Validation error check
+    if (errors.length) {
+      const { email, password } = req.body;
+      return res.status(422).render("./auth/login.ejs", {
+        path: "/login",
+        docTitle: "Login",
+        isAuthenticated: req.session.loggedIn,
+        alertMessage: null,
+        oldInput: {
+          email,
+          password,
+        },
+        validationErrors: errors,
+      });
+    }
     const { email, password } = req.body;
-    return res.status(422).render("./auth/login.ejs", {
-      path: "/login",
-      docTitle: "Login",
-      isAuthenticated: req.session.loggedIn,
-      alertMessage: null,
-      oldInput: {
-        email,
-        password,
-      },
-      validationErrors: errors,
-    });
-  }
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    // We can avoid using flash messages and just pass res.status(422) here to pass the old data.
-    req.flash("alertMessage", {
-      message: "Incorrect email id or password",
-      type: "danger",
-    });
-    return res.redirect("/login");
-  }
-  const { password: hash } = user;
-  const isPasswordValid = await bcrypt.compare(password, hash);
-  if (!isPasswordValid) {
-    req.flash("alertMessage", {
-      message: "Incorrect email id or password",
-      type: "danger",
-    });
-    return res.redirect("/login");
-  }
+    const user = await User.findOne({ email });
+    if (!user) {
+      // We can avoid using flash messages and just pass res.status(422) here to pass the old data.
+      req.flash("alertMessage", {
+        message: "Incorrect email id or password",
+        type: "danger",
+      });
+      return res.redirect("/login");
+    }
+    const { password: hash } = user;
+    const isPasswordValid = await bcrypt.compare(password, hash);
+    if (!isPasswordValid) {
+      req.flash("alertMessage", {
+        message: "Incorrect email id or password",
+        type: "danger",
+      });
+      return res.redirect("/login");
+    }
 
-  req.session.loggedIn = true;
-  req.session.user = user;
-  req.session.save(() => {
-    res.redirect("/");
-  });
+    req.session.loggedIn = true;
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect("/");
+    });
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 const postLogout = async (req, res) => {
@@ -150,46 +158,52 @@ const getForgotPassword = async (req, res) => {
 };
 
 const postForgotPassword = async (req, res) => {
-  const { email } = req.body;
-  const { user: existingUser } = req;
-  const { errors } = validationResult(req);
-  // Validation error check
-  if (errors.length) {
-    return res.status(422).render("./auth/forgetPassword.ejs", {
-      path: "/reset",
-      docTitle: "Reset password",
-      isAuthenticated: false,
-      alertMessage: null,
-      oldInput: {
+  try {
+    const { email } = req.body;
+    const { user: existingUser } = req;
+    const { errors } = validationResult(req);
+    // Validation error check
+    if (errors.length) {
+      return res.status(422).render("./auth/forgetPassword.ejs", {
+        path: "/reset",
+        docTitle: "Reset password",
+        isAuthenticated: false,
+        alertMessage: null,
+        oldInput: {
+          email,
+        },
+        validationErrors: errors,
+      });
+    }
+    crypto.randomBytes(32, async (err, buff) => {
+      if (err) throw err;
+      const token = buff.toString("hex");
+      // Save token under the user database
+      existingUser.resetToken = {
+        token,
+        expirationDate: Date.now() + 3600000,
+      };
+      await existingUser.save();
+      // Send mail to user
+      await sendMail(
         email,
-      },
-      validationErrors: errors,
-    });
-  }
-  crypto.randomBytes(32, async (err, buff) => {
-    if (err) throw err;
-    const token = buff.toString("hex");
-    // Save token under the user database
-    existingUser.resetToken = {
-      token,
-      expirationDate: Date.now() + 3600000,
-    };
-    await existingUser.save();
-    // Send mail to user
-    await sendMail(
-      email,
-      "Password reset - Online store",
-      `
+        "Password reset - Online store",
+        `
       <p>You've requested a password reset.</p>
       <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password</p>
       `
-    );
-    req.flash("alertMessage", {
-      message: "Check your inbox for password reset url & proceed further.",
-      type: "success",
+      );
+      req.flash("alertMessage", {
+        message: "Check your inbox for password reset url & proceed further.",
+        type: "success",
+      });
+      return res.redirect("/forgotPassword");
     });
-    return res.redirect("/forgotPassword");
-  });
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 const getResetPassword = async (req, res) => {
@@ -226,50 +240,56 @@ const getResetPassword = async (req, res) => {
 };
 
 const postResetPassword = async (req, res) => {
-  const { token, newPassword, confirmPassword } = req.body;
-  // Validation error check
-  const { errors } = validationResult(req);
-  if (errors.length) {
-    return res.status(422).render("./auth/resetPassword.ejs", {
-      path: "/reset",
-      docTitle: "Reset password",
-      isAuthenticated: false,
-      alertMessage: null,
-      token,
-      oldInput: {
-        newPassword,
-        confirmPassword,
-      },
-      validationErrors: errors,
+  try {
+    const { token, newPassword, confirmPassword } = req.body;
+    // Validation error check
+    const { errors } = validationResult(req);
+    if (errors.length) {
+      return res.status(422).render("./auth/resetPassword.ejs", {
+        path: "/reset",
+        docTitle: "Reset password",
+        isAuthenticated: false,
+        alertMessage: null,
+        token,
+        oldInput: {
+          newPassword,
+          confirmPassword,
+        },
+        validationErrors: errors,
+      });
+    }
+    // Check the matched user and check if token is expired.
+    // This happens when user opened the page but did't reset it for an hour.
+    const matchedUser = await User.findOne({
+      "resetToken.token": token,
+      "resetToken.expirationDate": { $gt: Date.now() },
     });
-  }
-  // Check the matched user and check if token is expired.
-  // This happens when user opened the page but did't reset it for an hour.
-  const matchedUser = await User.findOne({
-    "resetToken.token": token,
-    "resetToken.expirationDate": { $gt: Date.now() },
-  });
-  if (!matchedUser) {
+    if (!matchedUser) {
+      req.flash("alertMessage", {
+        message:
+          "Password reset failed as reset url is timed out, please try again!",
+        type: "danger",
+      });
+      return res.redirect("/forgotPassword");
+    }
+
+    // Hashing the password and removing the token information.
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    matchedUser.password = hashedPassword;
+    matchedUser.set("resetToken", undefined);
+    await matchedUser.save();
+
+    // Flash success message and redirect to /login
     req.flash("alertMessage", {
-      message:
-        "Password reset failed as reset url is timed out, please try again!",
-      type: "danger",
+      message: "Password changes successfully, please login to continue.",
+      type: "success",
     });
-    return res.redirect("/forgotPassword");
+    res.redirect("/login");
+  } catch (e) {
+    const error = new Error(e);
+    error.httpStatusCode = 500;
+    return next(error);
   }
-
-  // Hashing the password and removing the token information.
-  const hashedPassword = await bcrypt.hash(newPassword, 12);
-  matchedUser.password = hashedPassword;
-  matchedUser.set("resetToken", undefined);
-  await matchedUser.save();
-
-  // Flash success message and redirect to /login
-  req.flash("alertMessage", {
-    message: "Password changes successfully, please login to continue.",
-    type: "success",
-  });
-  res.redirect("/login");
 };
 
 module.exports = {

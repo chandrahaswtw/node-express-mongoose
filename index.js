@@ -7,13 +7,14 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 var flash = require("connect-flash");
 const User = require("./models/user");
+const multer = require("multer");
 
 // Routes
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-const errorRoute = require("./routes/error");
-const ordersRoute = require("./routes/orders");
-const authRoute = require("./routes/auth");
+const errorRoutes = require("./routes/errors");
+const ordersRoutes = require("./routes/orders");
+const authRoutes = require("./routes/auth");
 
 // Express app
 const app = express();
@@ -25,7 +26,31 @@ app.use(
   })
 );
 
-// Middleware (2) Using express-session & DB Store
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./images");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "_" + file.originalname
+      // Windows doesn't accept : in file names and we are doing the stuff.
+    );
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (["image/jpeg", "image/png", "image/jpg"].includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+// Middleware (2) Using multer
+app.use(multer({ storage: fileStorage, fileFilter }).single("image"));
+
+// Middleware (3) Using express-session & DB Store
 const store = new MongoDBStore({
   uri: process.env.MONGO_URI,
   collection: "session",
@@ -39,27 +64,35 @@ app.use(
   })
 );
 
-// Middleware (3) Get user data if session exists.
+// Middleware (4) Get user data if session exists.
 // We are doing this as session user object is not always up to date. Hence refreshing it on every route.
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
+  // Skip authentication check for static files
+  if (/\.(css|js|jpg|jpeg|png|gif|svg|ico)$/i.test(req.url)) {
+    return next();
+  }
+
   User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
     })
     .catch((err) => {
-      console.log("Unable to fetch the user info", err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 });
 
-// Middleware (4) Flash messages.
+// Middleware (5) Flash messages.
 app.use(flash());
 
 // Static files
 app.use(express.static(path.join(__dirname, "static")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // EJS setup
 app.set("view engine", "ejs");
@@ -69,9 +102,22 @@ app.set("views", allViews);
 // Using routes
 app.use(shopRoutes);
 app.use(adminRoutes);
-app.use(ordersRoute);
-app.use(authRoute);
-app.use(errorRoute);
+app.use(ordersRoutes);
+app.use(authRoutes);
+
+// Error route
+app.use((err, req, res, next) => {
+  console.log("ERROR OCCURED ", err);
+  res.status(500);
+  res.render("error", {
+    errorMessage: "Internal error occured",
+    docTitle: "Internal error",
+    path: "/500",
+    isAuthenticated: req.session.loggedIn,
+  });
+});
+
+app.use(errorRoutes);
 
 mongoose
   .connect(`${process.env.MONGO_URI}?retryWrites=true&w=majority`)
