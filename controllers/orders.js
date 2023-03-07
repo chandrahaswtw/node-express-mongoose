@@ -1,6 +1,7 @@
 const Order = require("./../models/order");
-const fs = require("fs/promises");
+const fs = require("fs");
 const { rootDir, path } = require("./../utils/path");
+const PDFDocument = require("pdfkit");
 
 const createOrder = async (req, res, next) => {
   try {
@@ -47,16 +48,45 @@ const getOrders = async (req, res, next) => {
 };
 
 const getInvoice = async (req, res, next) => {
-  let orderID = req.params.orderID;
-  console.log("ID is ", orderID);
-  orderID = 0;
-  const invoiceName = `invoice-${orderID}.pdf`;
-  const invoicePath = path.join(rootDir, "invoices", invoiceName);
   try {
-    const data = await fs.readFile(invoicePath);
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `inline; filename="${invoiceName}"`);
-    res.send(data);
+    // We will check if order id exists and if so, it belongs to current user
+    const { _id: userId } = req.user;
+    let orderID = req.params.orderID;
+    const orderData = await Order.find({ userId, _id: orderID })
+      .populate("items.productId")
+      .exec();
+    const currentOrder = orderData[0];
+    if (currentOrder && currentOrder.userId.toString() === userId.toString()) {
+      const invoiceName = `invoice-${orderID}.pdf`;
+      const invoicePath = path.join(rootDir, "invoices", invoiceName);
+      const pdfDoc = new PDFDocument();
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename="${invoiceName}"`);
+      pdfDoc.pipe(res);
+      pdfDoc.fontSize(16).text(`INVOICE`, { underline: true, align: "center" });
+      pdfDoc.moveDown();
+      pdfDoc.fontSize(12).text(`Order details #${orderID}`);
+      pdfDoc.moveDown();
+      let totalPrice = 0;
+      for (let item of currentOrder.items) {
+        totalPrice += item.quantity * item.productId.price;
+        pdfDoc
+          .fontSize(12)
+          .text(
+            `${item.productId.title} : ${item.quantity} X ${
+              item.productId.price
+            } = ${item.quantity * item.productId.price}`
+          );
+      }
+      pdfDoc.moveDown();
+      pdfDoc.fontSize(12).text(`Total price is: ${totalPrice}`);
+      pdfDoc.end();
+    } else {
+      const error = new Error("Forbidden");
+      error.httpStatusCode = 500;
+      return next(error);
+    }
   } catch (e) {
     const error = new Error(e);
     error.httpStatusCode = 500;

@@ -1,5 +1,6 @@
 const Product = require("./../models/products");
 const { validationResult } = require("express-validator");
+const { unlink } = require("fs/promises");
 
 const getAddProduct = (req, res, next) => {
   res.render("./admin/editProduct", {
@@ -99,38 +100,42 @@ const getEditProduct = async (req, res, next) => {
 };
 
 const postEditProduct = async (req, res, next) => {
-  const { id, title, description, price } = req.body;
-  const image = req?.file?.path;
-  const { errors } = validationResult(req);
-  if (errors.length) {
-    return res.status(422).render("./admin/editProduct", {
-      docTitle: "Add products",
-      path: "/addProduct",
-      isAuthenticated: req.session.loggedIn,
-      edit: true,
-      alertMessage: null,
-      hasError: true,
-      prod: {
-        title,
-        imageUrl,
-        description,
-        price,
-        _id: id,
-      },
-      validationErrors: errors,
-    });
-  }
-  const userId = req.user._id;
-  const modifiedProduct = {
-    title,
-    description,
-    price,
-    userId,
-  };
-  if (image) {
-    modifiedProduct.image = image;
-  }
   try {
+    const { id, title, description, price } = req.body;
+    const image = req?.file?.path;
+    const { errors } = validationResult(req);
+    if (errors.length) {
+      return res.status(422).render("./admin/editProduct", {
+        docTitle: "Add products",
+        path: "/addProduct",
+        isAuthenticated: req.session.loggedIn,
+        edit: true,
+        alertMessage: null,
+        hasError: true,
+        prod: {
+          title,
+          imageUrl,
+          description,
+          price,
+          _id: id,
+        },
+        validationErrors: errors,
+      });
+    }
+    const userId = req.user._id;
+    const modifiedProduct = {
+      title,
+      description,
+      price,
+      userId,
+    };
+    if (image) {
+      modifiedProduct.image = image;
+      // If new incoming image, the delete the old image
+      const productData = await Product.findById(id);
+      await unlink(productData.image);
+    }
+
     await Product.updateOne({ _id: id }, modifiedProduct);
     res.redirect("/");
   } catch (e) {
@@ -143,6 +148,9 @@ const postEditProduct = async (req, res, next) => {
 const postDeleteProduct = async (req, res, next) => {
   const { id } = req.body;
   try {
+    const productData = await Product.findById(id);
+    const { image } = productData;
+    await unlink(image);
     await Product.findByIdAndDelete(id);
   } catch (e) {
     const error = new Error(e);
