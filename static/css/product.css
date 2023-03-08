@@ -7,15 +7,13 @@
 }
 
 .productContainer .product {
-  height: 500px;
-  width: 300px;
   border-radius: 5px;
 }
 
 .productContainer .product .imageContainer img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 250px;
+  width: 250px;
+  object-fit: contain;
 }
 
 .productContainer .product .imageContainer {
@@ -133,4 +131,8 @@
 
 .editProductForm .buttonWrapper.right-arrow {
   margin-left: 5px;
+}
+
+.alignCenter {
+  text-align: center;
 }

@@ -1,12 +1,18 @@
 const Product = require("../models/products");
-
+const PRODUCTS_PER_PAGE = 1;
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const page = +req.query.page || 1;
+    const productCount = await Product.count();
+    const products = await Product.find()
+      .skip(PRODUCTS_PER_PAGE * (page - 1))
+      .limit(PRODUCTS_PER_PAGE);
     res.render("./shop/allProducts", {
       prod: products,
       path: "/",
       docTitle: "Home",
+      productCount,
+      currentPage: page,
       isAuthenticated: req.session.loggedIn,
     });
   } catch (e) {

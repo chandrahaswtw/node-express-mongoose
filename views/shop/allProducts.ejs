@@ -23,15 +23,29 @@
           <input type="hidden" name="id" value="<%= i._id%>">
         </form>
       </div>
-      <div class="title"><%= i.title %></div>
-      <div class="description"><%= i.description %></div>
-      <div class="price">₹ <%= i.price %></div>
+      <div class="alignCenter">
+        <div class="title"><%= i.title %></div>
+        <div class="description"><%= i.description %></div>
+        <div class="price">₹ <%= i.price %></div>
+      </div>
       <% if(isAuthenticated) {%>
       <%- include('./../partials/addCart.ejs', {prod : i})%>
       <% } %>
     </div>
     <% } %>
   </section>
+  <div class="pagination">
+    <% if(productCount > 1) {%>
+    <a href="/?page=<%= currentPage > 1 ? currentPage-1 : 0 %>"><</a>
+    <% } %>
+    <a href="/?page=<%= currentPage%>"><%= currentPage%></a>
+    <% if(currentPage < productCount) {%>
+    <a href="/?page=<%= currentPage + 1 %>"><%= currentPage + 1%></a>
+    <% } %>
+    <% if(currentPage + 1 < productCount) {%>
+    <a href="/?page=<%= currentPage + 1 %>">></a>
+    <% } %>
+  </div>  
   <% } else {%>
   <p>No products</p>
   <% } %>

@@ -76,3 +76,17 @@ hr {
   justify-content: center;
   align-items: center;
 }
+
+/* Pagination */
+.pagination {
+  text-align: center;
+  padding: 1rem;
+}
+
+.pagination > a {
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: inline-block;
+  text-decoration: none;
+}
