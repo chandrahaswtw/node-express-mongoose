@@ -8,7 +8,10 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 var flash = require("connect-flash");
 const User = require("./models/user");
 const multer = require("multer");
-
+const helmet = require("helmet");
+const compression = require("compression");
+var morgan = require("morgan");
+const fs = require("fs");
 // Routes
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -98,6 +101,12 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.set("view engine", "ejs");
 const allViews = path.join(__dirname, "views");
 app.set("views", allViews);
+
+app.use(helmet());
+var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // Using routes
 app.use(shopRoutes);
