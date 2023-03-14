@@ -102,7 +102,8 @@ app.set("view engine", "ejs");
 const allViews = path.join(__dirname, "views");
 app.set("views", allViews);
 
-app.use(helmet());
+// app.use(helmet());
+app.use(compression());
 var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
   flags: "a",
 });
@@ -133,7 +134,8 @@ mongoose
   .then(async () => {
     console.log("Successfully connected to database");
     mongoose.set("debug", false); //Stop mongoose to console.log the queries
-    app.listen(3000, () => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
       console.log("App started on port 3000");
     });
   })
